@@ -1,17 +1,22 @@
+from decimal import Decimal
 from typing import Dict
 import logging
 
-from app.config import settings
+from core.config import settings
 
 logger = logging.getLogger(settings.logger.logger_name)
 
 # TODO: можно добавить кеширование
 
-class CurrencyState:
+class BalanceStore:
     def __init__(self):
-        self.amounts: Dict[str, float] = {}
-        self.rates: Dict[str, float] = {}
+        self.amounts: Dict[str, Decimal] = {}
+        self.rates: Dict[str, Decimal] = {}
         self._changed = False
+
+    def _check_amount(self, code, new_amount):
+        if self.amounts[code] + new_amount < 0:
+            raise ValueError()
 
     def set_changed(self) -> None:
         self._changed = True
@@ -26,30 +31,31 @@ class CurrencyState:
         self.set_changed()
         self.log_changed()
 
-    def set_rates(self, rates: Dict[str, float]) -> None:
+    def set_rates(self, rates: Dict[str, Decimal]) -> None:
         self.rates = rates
         self.data_change()
 
-    def init_amount(self, amounts: Dict[str, float]) -> None:
+    def init_amount(self, amounts: Dict[str, Decimal]) -> None:
         self.amounts = {
             cur.upper(): amount for cur, amount in amounts.items()
         }
 
-    def get_amount(self, currency_code: str) -> float:
+    def get_amount(self, currency_code: str) -> Decimal:
         return self.amounts.get(currency_code)
 
-    def set_amount(self, new_amounts: Dict[str, float]) -> None:
+    def set_amount(self, new_amounts: Dict[str, Decimal]) -> None:
         for code, amount in new_amounts.items():
             self.amounts[code.upper()] = amount
         self.data_change()
 
-    def modify_amount(self, modify_amounts: Dict[str, float]) -> None:
+    def modify_amount(self, modify_amounts: Dict[str, Decimal]) -> None:
         for code, amount in modify_amounts.items():
             code = code.upper()
+            self._check_amount(code, amount)
             self.amounts[code] = self.amounts.get(code, 0) + amount
         self.data_change()
 
-    def summary(self) -> Dict[str, Dict[str, float]]:
+    def summary(self) -> Dict[str, Dict[str, Decimal]]:
         summary = {"amounts": dict(self.amounts)}
         pair_rates = {
             f"{c2}-{c1}": round(self.rates[c2] / self.rates[c1], 4)
@@ -91,6 +97,3 @@ class CurrencyState:
         lines.append("sum: " + " / ".join(parts))
 
         return "\n".join(lines)
-
-
-currency_state = CurrencyState()
