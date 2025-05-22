@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from pydantic import BaseModel
 from typing import Dict
 
@@ -5,7 +7,7 @@ from typing import Dict
 class ValuteResponse(BaseModel):
     Nominal: int
     Name: str
-    Value: float
+    Value: Decimal
 
 
 class ExchangeRateResponse(BaseModel):

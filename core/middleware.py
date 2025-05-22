@@ -2,15 +2,34 @@ import logging
 
 from fastapi import FastAPI, Request, Response
 
-from app.config import settings
+from core.config import settings
 
 logger = logging.getLogger(settings.logger.logger_name)
 
 
 def register_middleware(app: FastAPI) -> None:
+    """
+    Регистрирует middleware для FastAPI приложения, который логирует запросы и ответы для отладки.
+
+    :param app: Экземпляр FastAPI приложения.
+    """
+
     @app.middleware("http")
     async def add_debug_logging(request: Request, call_next):
-        logger.debug("Request: %s %s", request.method, request.url)
+        """
+        Middleware для логирования запросов и ответов.
+
+        :param request: Входящий HTTP-запрос.
+        :param call_next: Функция для вызова следующего обработчика.
+        :return: HTTP-ответ.
+        """
+        try:
+            request_body = await request.json()
+        except Exception:
+            request_body = None
+        logger.debug(
+            "Request: %s %s body: %s", request.method, request.url, request_body
+        )
 
         response = await call_next(request)
 

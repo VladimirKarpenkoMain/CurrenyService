@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 
-from app.schemas.currency import AmountUpdateSchema
+from schemas.currency import AmountUpdateSchema
 
 
 class AbstractFetchService(ABC):
@@ -8,10 +8,17 @@ class AbstractFetchService(ABC):
     async def fetch_rates(self):
         pass
 
+    @abstractmethod
+    async def aclose(self):
+        pass
+
 
 class AbstractCurrencyService(ABC):
     @abstractmethod
-    async def get_by_code(self, currency_code: str):
+    async def get_by_code(
+        self,
+        currency_code: str,
+    ):
         pass
 
     @abstractmethod
@@ -23,5 +30,7 @@ class AbstractCurrencyService(ABC):
         pass
 
     @abstractmethod
-    async def get_total_info(self):
+    async def get_total_info(
+        self,
+    ):
         pass

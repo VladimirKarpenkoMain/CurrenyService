@@ -30,7 +30,6 @@
 
    ```bash
    git clone <URL_РЕПОЗИТОРИЯ>
-   cd currency-service
    ```
 2. Создать и активировать виртуальное окружение:
 
@@ -61,7 +60,7 @@
 ## Запуск
 
 ```bash
-python3 -m app.service \
+python3 -m service \
   --rub 1000 \
   --usd 500 \
   --eur 300 \
@@ -105,12 +104,14 @@ python3 -m app.service \
 
 ```
 currency-service/
-├── app
-│   ├── api         # REST-роуты
-│   ├── core        # Бизнес-логика, планировщики, состояние
-│   ├── schemas     # Pydantic модели запросов/ответов
-│   └── utils       # Утилиты (логгер, CLI)
+├── api         # REST-роуты
+├── core        # Бизнес-логика, планировщики, состояние
+├── schemas     # Pydantic модели запросов/ответов
+├── utils       # Утилиты (логгер, CLI)
+├── service.py
 ├── requirements.txt
 ├── .flake8
+├── README.MD
+├── тестовое.md
 └── .gitignore
 ```

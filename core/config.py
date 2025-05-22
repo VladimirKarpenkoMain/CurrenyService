@@ -6,6 +6,7 @@ from pydantic_settings import BaseSettings
 
 BASE_DIR = Path(__file__).parent.parent
 
+
 class RunConfig(BaseModel):
     host: str = "0.0.0.0"
     port: int = 8000
@@ -23,7 +24,7 @@ class FetchConfig(BaseModel):
 
 
 class SchedulerConfig(BaseModel):
-    print_sleep: int = 1 # Minutes
+    print_sleep: int = 1  # Minutes
 
 
 class Settings(BaseSettings):
@@ -35,6 +36,7 @@ class Settings(BaseSettings):
         "usd",
         "eur",
         "rub",
+        "azn",
     ]
 
     # Logging
